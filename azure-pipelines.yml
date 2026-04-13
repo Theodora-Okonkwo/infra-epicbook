@@ -29,6 +29,13 @@ stages:
               backendAzureRmContainerName: 'tfstate'
               backendAzureRmKey: 'epicbook.tfstate'
 
+          - script: |
+              terraform state rm azurerm_mysql_flexible_server.mysql || true
+            displayName: 'Remove MySQL from Terraform state'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+            env:
+              TF_VAR_mysql_password: $(TF_VAR_mysql_password)
+
           - task: TerraformTaskV4@4
             displayName: 'Terraform Plan'
             inputs:
