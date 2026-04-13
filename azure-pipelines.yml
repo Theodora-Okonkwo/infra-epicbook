@@ -30,8 +30,11 @@ stages:
               backendAzureRmKey: 'epicbook.tfstate'
 
           - script: |
-              terraform state rm azurerm_mysql_flexible_server.mysql || true
-            displayName: 'Remove MySQL from Terraform state'
+              terraform import \
+                -var="mysql_password=$(TF_VAR_mysql_password)" \
+                azurerm_mysql_flexible_server.mysql \
+                /subscriptions/1a79f85d-55e2-4ee6-9655-2fe8d86dc1cc/resourceGroups/epicbook-rg/providers/Microsoft.DBforMySQL/flexibleServers/epicbook-mysql-server || true
+            displayName: 'Import MySQL into Terraform state'
             workingDirectory: '$(System.DefaultWorkingDirectory)'
             env:
               TF_VAR_mysql_password: $(TF_VAR_mysql_password)
