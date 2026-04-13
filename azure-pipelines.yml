@@ -2,7 +2,7 @@ trigger:
   - main
 
 pool:
-  vmImage: ubuntu-latest
+  name: Default
 
 variables:
   TF_VERSION: '1.6.0'
