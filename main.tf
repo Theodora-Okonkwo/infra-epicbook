@@ -195,7 +195,6 @@ resource "azurerm_mysql_flexible_server" "mysql" {
   administrator_password = var.mysql_password
   sku_name               = "B_Standard_B1ms"
   version                = "8.0.21"
-  zone                   = "3"
   delegated_subnet_id    = azurerm_subnet.mysql_subnet.id
   private_dns_zone_id    = azurerm_private_dns_zone.mysql_dns.id
 
