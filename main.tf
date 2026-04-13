@@ -19,7 +19,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "epicbook-rg"
-  location = "West Europe"
+  location = "Canada Central"
 }
 
 resource "azurerm_virtual_network" "vnet" {
