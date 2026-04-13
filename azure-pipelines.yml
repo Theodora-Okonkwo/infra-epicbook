@@ -36,6 +36,8 @@ stages:
               command: 'plan'
               workingDirectory: '$(System.DefaultWorkingDirectory)'
               environmentServiceNameAzureRM: 'epicbook-arm-connection'
+            env:
+              TF_VAR_mysql_password: $(TF_VAR_mysql_password)
 
           - task: TerraformTaskV4@4
             displayName: 'Terraform Apply'
@@ -45,6 +47,8 @@ stages:
               workingDirectory: '$(System.DefaultWorkingDirectory)'
               environmentServiceNameAzureRM: 'epicbook-arm-connection'
               commandOptions: '-auto-approve'
+            env:
+              TF_VAR_mysql_password: $(TF_VAR_mysql_password)
 
           - script: |
               echo "##vso[task.setvariable variable=APP_PUBLIC_IP;isOutput=true]$(terraform output -raw app_public_ip)"
