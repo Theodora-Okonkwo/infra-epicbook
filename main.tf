@@ -19,7 +19,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "epicbook-rg"
-  location = "East US"
+  location = "West Europe"
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -41,6 +41,7 @@ resource "azurerm_public_ip" "frontend_ip" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
+  sku                 = "Standard"
 }
 
 resource "azurerm_network_interface" "frontend_nic" {
@@ -72,7 +73,7 @@ resource "azurerm_linux_virtual_machine" "frontend" {
   name                = "epicbook-frontend"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_B1s"
+  size                = "Standard_B2s"
   admin_username      = "azureuser"
 
   network_interface_ids = [azurerm_network_interface.frontend_nic.id]
@@ -99,7 +100,7 @@ resource "azurerm_linux_virtual_machine" "backend" {
   name                = "epicbook-backend"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_B1s"
+  size                = "Standard_B2s"
   admin_username      = "azureuser"
 
   network_interface_ids = [azurerm_network_interface.backend_nic.id]
@@ -127,7 +128,7 @@ resource "azurerm_mysql_flexible_server" "mysql" {
   resource_group_name    = azurerm_resource_group.rg.name
   location               = azurerm_resource_group.rg.location
   administrator_login    = "mysqladmin"
-  administrator_password = "EpicBook@2024!"
+  administrator_password = var.mysql_password
   sku_name               = "B_Standard_B1ms"
   version                = "8.0.21"
 }
