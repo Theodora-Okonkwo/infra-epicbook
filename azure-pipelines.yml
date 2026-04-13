@@ -1,0 +1,53 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  TF_VERSION: '1.6.0'
+
+stages:
+  - stage: Terraform
+    jobs:
+      - job: TerraformApply
+        steps:
+
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: $(TF_VERSION)
+
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              backendServiceArm: 'epicbook-arm-connection'
+              backendAzureRmResourceGroupName: 'tfstate-rg'
+              backendAzureRmStorageAccountName: 'tfstatetheodora123'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'epicbook.tfstate'
+
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Plan'
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              environmentServiceNameAzureRM: 'epicbook-arm-connection'
+
+          - task: TerraformTaskV4@4
+            displayName: 'Terraform Apply'
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              environmentServiceNameAzureRM: 'epicbook-arm-connection'
+              commandOptions: '-auto-approve'
+
+          - script: |
+              echo "##vso[task.setvariable variable=APP_PUBLIC_IP;isOutput=true]$(terraform output -raw app_public_ip)"
+              echo "##vso[task.setvariable variable=MYSQL_FQDN;isOutput=true]$(terraform output -raw mysql_fqdn)"
+            displayName: 'Export Terraform Outputs'
+            name: tfOutputs
